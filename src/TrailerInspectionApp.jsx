@@ -11,14 +11,21 @@ export default function TrailerInspectionApp() {
     const vinMatch = text.match(/VIN[:\s]*([A-Z0-9]{17})/i);
     const modelMatch = text.match(/Model[:\s]*([A-Z0-9\-]+)/i);
 
-    // Try to get the customer name as the ALL CAPS line before VIN
     const lines = text.split("\n");
     let customer = "";
+
     if (vinMatch) {
       const vinLine = lines.findIndex((line) => line.includes(vinMatch[1]));
-      for (let i = vinLine - 1; i >= 0; i--) {
+      for (let i = vinLine - 1; i >= 0 && i >= vinLine - 3; i--) {
         const candidate = lines[i].trim();
-        if (candidate === candidate.toUpperCase() && candidate.length > 5) {
+
+        const isAllCaps = /^[A-Z0-9 '&]+$/.test(candidate);
+        const isLikelyCustomer = isAllCaps &&
+          !candidate.includes("APPROVED") &&
+          !candidate.includes("OPTION") &&
+          candidate.length > 5;
+
+        if (isLikelyCustomer) {
           customer = candidate;
           break;
         }
