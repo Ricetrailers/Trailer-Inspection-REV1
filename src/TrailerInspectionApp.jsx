@@ -109,9 +109,11 @@ export default function TrailerInspectionApp() {
       }
     ]);
 
+    console.log("Supabase insert result:", { data, error });
+
     if (error) {
-      console.error("❌ Error saving inspection:", error, { vin: tagData.vin, model: tagData.model, customer: tagData.customer });
-      alert("Failed to save inspection.");
+      console.error("❌ Error saving inspection:", error);
+      alert("Failed to save inspection. See console for details.");
     } else {
       console.log("✅ Inspection saved:", data);
       alert("Inspection saved.");
