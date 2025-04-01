@@ -62,6 +62,3 @@ export default function TrailerInspectionApp() {
     </div>
   );
 }
-
-  );
-}
