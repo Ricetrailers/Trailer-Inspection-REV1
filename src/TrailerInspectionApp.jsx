@@ -4,6 +4,7 @@ import Tesseract from "tesseract.js";
 export default function TrailerInspectionApp() {
   const [image, setImage] = useState(null);
   const [tagData, setTagData] = useState({ vin: "", model: "", customer: "" });
+  const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const extractField = (text, label) => {
@@ -26,6 +27,7 @@ export default function TrailerInspectionApp() {
       });
       const text = result.data.text;
       console.log("OCR Result:\n", text);
+      setRawText(text);
 
       setTagData({
         vin: extractField(text, "VIN"),
@@ -35,6 +37,7 @@ export default function TrailerInspectionApp() {
     } catch (error) {
       console.error("OCR failed:", error);
       setTagData({ vin: "", model: "", customer: "" });
+      setRawText("(OCR failed)");
     }
 
     setLoading(false);
@@ -56,6 +59,13 @@ export default function TrailerInspectionApp() {
             <p><strong>VIN:</strong> {tagData.vin}</p>
             <p><strong>Model:</strong> {tagData.model}</p>
             <p><strong>Customer:</strong> {tagData.customer}</p>
+          </div>
+        )}
+
+        {!loading && rawText && (
+          <div style={{ marginTop: '2rem', fontSize: '0.85rem', whiteSpace: 'pre-wrap', color: '#555' }}>
+            <h2 style={{ fontWeight: 'bold' }}>Raw OCR Output:</h2>
+            <pre>{rawText}</pre>
           </div>
         )}
       </div>
