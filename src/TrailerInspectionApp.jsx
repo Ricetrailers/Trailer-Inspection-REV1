@@ -133,7 +133,7 @@ export default function TrailerInspectionApp() {
   return (
     <div style={{ padding: '1rem', maxWidth: '600px', margin: 'auto' }}>
       <div style={{ background: '#fff', borderRadius: '8px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Trailer Tag Scanner</h1>
+        <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Final Inspection</h1>
 
         <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'block', marginTop: '1rem' }} />
 
