@@ -101,7 +101,7 @@ export default function TrailerInspectionApp() {
     }
 
     console.log("Saving inspection:", tagData);
-    const { data, error } = await supabase.from("inspections").insert([
+    const { data, error } = await supabase.from("\"Trailer Inspection\"").insert([
       {
         vin: tagData.vin,
         model: tagData.model,
