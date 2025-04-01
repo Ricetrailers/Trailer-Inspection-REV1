@@ -38,6 +38,11 @@ export default function TrailerInspectionApp() {
     };
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTagData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -76,11 +81,11 @@ export default function TrailerInspectionApp() {
 
         {image && <img src={image} alt="Tag Preview" style={{ width: '100%', borderRadius: '4px', marginTop: '1rem' }} />}
 
-        {!loading && tagData.vin && (
+        {!loading && (
           <div style={{ marginTop: '1rem' }}>
-            <p><strong>VIN:</strong> {tagData.vin}</p>
-            <p><strong>Model:</strong> {tagData.model}</p>
-            <p><strong>Customer:</strong> {tagData.customer}</p>
+            <label><strong>VIN:</strong> <input type="text" name="vin" value={tagData.vin} onChange={handleInputChange} style={{ width: '100%' }} /></label>
+            <label><strong>Model:</strong> <input type="text" name="model" value={tagData.model} onChange={handleInputChange} style={{ width: '100%' }} /></label>
+            <label><strong>Customer:</strong> <input type="text" name="customer" value={tagData.customer} onChange={handleInputChange} style={{ width: '100%' }} /></label>
           </div>
         )}
 
