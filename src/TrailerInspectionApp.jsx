@@ -110,7 +110,7 @@ export default function TrailerInspectionApp() {
     ]);
 
     if (error) {
-      console.error("❌ Error saving inspection:", error.message || error);
+      console.error("❌ Error saving inspection:", error?.message || error);
       alert("Failed to save inspection.");
     } else {
       console.log("✅ Inspection saved:", data);
