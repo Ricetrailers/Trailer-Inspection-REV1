@@ -18,7 +18,7 @@ export default function TrailerInspectionApp() {
   }, []);
 
   const loadInspections = async () => {
-    const { data, error } = await supabase.from("\"Trailer Inspection\"").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("inspections").select("*").order("created_at", { ascending: false });
     if (error) {
       console.error("Error loading inspections:", error);
     } else {
