@@ -3,7 +3,7 @@ import Tesseract from "tesseract.js";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "https://cgzsryxqmykjlgczngce.supabase.co";
-const supabaseKey = "<YOUR-ANON-KEY-HERE>";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnenNyeXhxbXlramxnY3puZ2NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1MzI0NjksImV4cCI6MjA1OTEwODQ2OX0.CRtzUfJJ22zDCg7gMDWL8TGP0jnCLywuFtEdaHwiEkY";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function TrailerInspectionApp() {
