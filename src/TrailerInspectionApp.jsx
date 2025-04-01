@@ -6,6 +6,7 @@ export default function TrailerInspectionApp() {
   const [tagData, setTagData] = useState({ vin: "", model: "", customer: "" });
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [savedInspections, setSavedInspections] = useState([]);
 
   const extractFields = (text) => {
     const vinMatch = text.match(/VIN[:\s]*([A-Z0-9]{17})/i);
@@ -75,6 +76,15 @@ export default function TrailerInspectionApp() {
     setLoading(false);
   };
 
+  const saveInspection = () => {
+    setSavedInspections(prev => [...prev, tagData]);
+    alert("Inspection saved.");
+  };
+
+  const deleteInspection = (index) => {
+    setSavedInspections(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div style={{ padding: '1rem', maxWidth: '600px', margin: 'auto' }}>
       <div style={{ background: '#fff', borderRadius: '8px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
@@ -91,6 +101,21 @@ export default function TrailerInspectionApp() {
             <label><strong>VIN:</strong> <input type="text" name="vin" value={tagData.vin} onChange={handleInputChange} style={{ width: '100%' }} /></label>
             <label><strong>Model:</strong> <input type="text" name="model" value={tagData.model} onChange={handleInputChange} style={{ width: '100%' }} /></label>
             <label><strong>Customer:</strong> <input type="text" name="customer" value={tagData.customer} onChange={handleInputChange} style={{ width: '100%' }} /></label>
+            <button onClick={saveInspection} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>Save Inspection</button>
+          </div>
+        )}
+
+        {savedInspections.length > 0 && (
+          <div style={{ marginTop: '2rem' }}>
+            <h2>Saved Inspections</h2>
+            {savedInspections.map((item, index) => (
+              <div key={index} style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '0.5rem', marginTop: '0.5rem' }}>
+                <p><strong>VIN:</strong> {item.vin}</p>
+                <p><strong>Model:</strong> {item.model}</p>
+                <p><strong>Customer:</strong> {item.customer}</p>
+                <button onClick={() => deleteInspection(index)} style={{ marginTop: '0.5rem' }}>Delete</button>
+              </div>
+            ))}
           </div>
         )}
 
