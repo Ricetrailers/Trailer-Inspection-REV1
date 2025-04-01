@@ -7,10 +7,29 @@ export default function TrailerInspectionApp() {
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const extractField = (text, label) => {
-    const regex = new RegExp(`${label}[:\s]*([A-Z0-9\-']{5,})`, 'i');
-    const match = text.match(regex);
-    return match ? match[1].trim() : "";
+  const extractFields = (text) => {
+    const vinMatch = text.match(/VIN[:\s]*([A-Z0-9]{17})/i);
+    const modelMatch = text.match(/Model[:\s]*([A-Z0-9\-]+)/i);
+
+    // Try to get the customer name as the ALL CAPS line before VIN
+    const lines = text.split("\n");
+    let customer = "";
+    if (vinMatch) {
+      const vinLine = lines.findIndex((line) => line.includes(vinMatch[1]));
+      for (let i = vinLine - 1; i >= 0; i--) {
+        const candidate = lines[i].trim();
+        if (candidate === candidate.toUpperCase() && candidate.length > 5) {
+          customer = candidate;
+          break;
+        }
+      }
+    }
+
+    return {
+      vin: vinMatch ? vinMatch[1] : "",
+      model: modelMatch ? modelMatch[1] : "",
+      customer,
+    };
   };
 
   const handleImageChange = async (e) => {
@@ -29,11 +48,8 @@ export default function TrailerInspectionApp() {
       console.log("OCR Result:\n", text);
       setRawText(text);
 
-      setTagData({
-        vin: extractField(text, "VIN"),
-        model: extractField(text, "MODEL"),
-        customer: extractField(text, "CUSTOMER"),
-      });
+      const extracted = extractFields(text);
+      setTagData(extracted);
     } catch (error) {
       console.error("OCR failed:", error);
       setTagData({ vin: "", model: "", customer: "" });
