@@ -16,13 +16,16 @@ export default function TrailerInspectionApp() {
 
     if (vinMatch) {
       const vinLine = lines.findIndex((line) => line.includes(vinMatch[1]));
-      for (let i = vinLine - 1; i >= 0 && i >= vinLine - 3; i--) {
+      for (let i = vinLine - 1; i >= 0 && i >= vinLine - 5; i--) {
         const candidate = lines[i].trim();
 
-        const isAllCaps = /^[A-Z0-9 '&]+$/.test(candidate);
+        const isAllCaps = /^[A-Z0-9 '\-]+$/.test(candidate);
         const isLikelyCustomer = isAllCaps &&
           !candidate.includes("APPROVED") &&
           !candidate.includes("OPTION") &&
+          !candidate.includes("SEQUENCE") &&
+          !candidate.includes("TIRES") &&
+          !candidate.includes("COLOR") &&
           candidate.length > 5;
 
         if (isLikelyCustomer) {
