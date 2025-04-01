@@ -95,11 +95,25 @@ export default function TrailerInspectionApp() {
   };
 
   const saveInspection = async () => {
-    const { data, error } = await supabase.from("inspections").insert([tagData]);
+    if (!tagData.vin || tagData.vin.includes("Could not") || tagData.vin === "OCR failed") {
+      alert("Please enter a valid VIN before saving.");
+      return;
+    }
+
+    console.log("Saving inspection:", tagData);
+    const { data, error } = await supabase.from("inspections").insert([
+      {
+        vin: tagData.vin,
+        model: tagData.model,
+        customer: tagData.customer
+      }
+    ]);
+
     if (error) {
-      console.error("Error saving inspection:", error);
+      console.error("❌ Error saving inspection:", error);
       alert("Failed to save inspection.");
     } else {
+      console.log("✅ Inspection saved:", data);
       alert("Inspection saved.");
       loadInspections();
     }
