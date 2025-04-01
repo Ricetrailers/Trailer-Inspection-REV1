@@ -11,22 +11,18 @@ export default function TrailerInspectionApp() {
     const vinMatch = text.match(/VIN[:\s]*([A-Z0-9]{17})/i);
     const modelMatch = text.match(/Model[:\s]*([A-Z0-9\-]+)/i);
 
-    const lines = text.split("\n");
+    const lines = text.split("\n").map(line => line.trim()).filter(Boolean);
     let customer = "";
 
     if (vinMatch) {
       const vinLine = lines.findIndex((line) => line.includes(vinMatch[1]));
       for (let i = vinLine - 1; i >= 0 && i >= vinLine - 5; i--) {
-        const candidate = lines[i].trim();
+        const candidate = lines[i];
 
-        const isAllCaps = /^[A-Z0-9 '\-]+$/.test(candidate);
+        const isAllCaps = /^[A-Z0-9 '&.-]+$/.test(candidate);
         const isLikelyCustomer = isAllCaps &&
-          !candidate.includes("APPROVED") &&
-          !candidate.includes("OPTION") &&
-          !candidate.includes("SEQUENCE") &&
-          !candidate.includes("TIRES") &&
-          !candidate.includes("COLOR") &&
-          candidate.length > 5;
+          !/APPROVED|OPTION|SEQUENCE|TIRES|COLOR|DATE|MODEL|YEAR/.test(candidate) &&
+          candidate.length >= 10;
 
         if (isLikelyCustomer) {
           customer = candidate;
