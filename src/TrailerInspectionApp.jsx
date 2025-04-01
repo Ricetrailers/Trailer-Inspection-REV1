@@ -1,26 +1,43 @@
 import { useState } from "react";
+import Tesseract from "tesseract.js";
 
 export default function TrailerInspectionApp() {
   const [image, setImage] = useState(null);
   const [tagData, setTagData] = useState({ vin: "", model: "", customer: "" });
   const [loading, setLoading] = useState(false);
 
+  const extractField = (text, label) => {
+    const regex = new RegExp(`${label}[:\s]*([A-Z0-9\-']{5,})`, 'i');
+    const match = text.match(regex);
+    return match ? match[1].trim() : "";
+  };
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setImage(URL.createObjectURL(file));
+    const imageUrl = URL.createObjectURL(file);
+    setImage(imageUrl);
     setLoading(true);
 
-    // Simulate OCR result for now
-    setTimeout(() => {
-      setTagData({
-        vin: "4RWBS1218SH056665",
-        model: "SST7612",
-        customer: "STALLON'S AUTO SALES",
+    try {
+      const result = await Tesseract.recognize(imageUrl, 'eng', {
+        logger: (m) => console.log(m)
       });
-      setLoading(false);
-    }, 1500);
+      const text = result.data.text;
+      console.log("OCR Result:\n", text);
+
+      setTagData({
+        vin: extractField(text, "VIN"),
+        model: extractField(text, "MODEL"),
+        customer: extractField(text, "CUSTOMER"),
+      });
+    } catch (error) {
+      console.error("OCR failed:", error);
+      setTagData({ vin: "", model: "", customer: "" });
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -43,5 +60,8 @@ export default function TrailerInspectionApp() {
         )}
       </div>
     </div>
+  );
+}
+
   );
 }
