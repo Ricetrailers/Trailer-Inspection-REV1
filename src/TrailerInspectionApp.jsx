@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Tesseract from "tesseract.js";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = "https://cgzsryxqmykjlgczngce.supabase.co";
+const supabaseKey = "<YOUR-ANON-KEY-HERE>";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function TrailerInspectionApp() {
   const [image, setImage] = useState(null);
@@ -7,6 +12,19 @@ export default function TrailerInspectionApp() {
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
   const [savedInspections, setSavedInspections] = useState([]);
+
+  useEffect(() => {
+    loadInspections();
+  }, []);
+
+  const loadInspections = async () => {
+    const { data, error } = await supabase.from("inspections").select("*").order("created_at", { ascending: false });
+    if (error) {
+      console.error("Error loading inspections:", error);
+    } else {
+      setSavedInspections(data);
+    }
+  };
 
   const extractFields = (text) => {
     const vinMatch = text.match(/VIN[:\s]*([A-Z0-9]{17})/i);
@@ -76,13 +94,24 @@ export default function TrailerInspectionApp() {
     setLoading(false);
   };
 
-  const saveInspection = () => {
-    setSavedInspections(prev => [...prev, tagData]);
-    alert("Inspection saved.");
+  const saveInspection = async () => {
+    const { data, error } = await supabase.from("inspections").insert([tagData]);
+    if (error) {
+      console.error("Error saving inspection:", error);
+      alert("Failed to save inspection.");
+    } else {
+      alert("Inspection saved.");
+      loadInspections();
+    }
   };
 
-  const deleteInspection = (index) => {
-    setSavedInspections(prev => prev.filter((_, i) => i !== index));
+  const deleteInspection = async (id) => {
+    const { error } = await supabase.from("inspections").delete().eq("id", id);
+    if (error) {
+      console.error("Error deleting inspection:", error);
+    } else {
+      loadInspections();
+    }
   };
 
   return (
@@ -108,12 +137,12 @@ export default function TrailerInspectionApp() {
         {savedInspections.length > 0 && (
           <div style={{ marginTop: '2rem' }}>
             <h2>Saved Inspections</h2>
-            {savedInspections.map((item, index) => (
-              <div key={index} style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '0.5rem', marginTop: '0.5rem' }}>
+            {savedInspections.map((item) => (
+              <div key={item.id} style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '0.5rem', marginTop: '0.5rem' }}>
                 <p><strong>VIN:</strong> {item.vin}</p>
                 <p><strong>Model:</strong> {item.model}</p>
                 <p><strong>Customer:</strong> {item.customer}</p>
-                <button onClick={() => deleteInspection(index)} style={{ marginTop: '0.5rem' }}>Delete</button>
+                <button onClick={() => deleteInspection(item.id)} style={{ marginTop: '0.5rem' }}>Delete</button>
               </div>
             ))}
           </div>
