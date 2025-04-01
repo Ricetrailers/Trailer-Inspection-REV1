@@ -60,10 +60,15 @@ export default function TrailerInspectionApp() {
       setRawText(text);
 
       const extracted = extractFields(text);
-      setTagData(extracted);
+      const updatedData = {
+        vin: extracted.vin || "Could not identify VIN",
+        model: extracted.model || "Could not identify Model",
+        customer: extracted.customer || "Could not identify Customer",
+      };
+      setTagData(updatedData);
     } catch (error) {
       console.error("OCR failed:", error);
-      setTagData({ vin: "", model: "", customer: "" });
+      setTagData({ vin: "OCR failed", model: "OCR failed", customer: "OCR failed" });
       setRawText("(OCR failed)");
     }
 
